@@ -103,11 +103,14 @@ public:
     cout<<"dimension of svm detector for HOG detect(w+b):"<<detector_detect.size()<<endl;
     HOG_descriptor_detect.setSVMDetector(detector_detect);
     //video
+    if(!nh_image_param.getParam("show_video_flag", show_video_flag))show_video_flag = false;
+    if(show_video_flag)
+    {
     INPUT_VIDEO_WINDOW_NAME="input video";
     RESULT_VIDEO_WINDOW_NAME="result video";
     namedWindow(INPUT_VIDEO_WINDOW_NAME);
     namedWindow(RESULT_VIDEO_WINDOW_NAME);
-    if(!nh_image_param.getParam("show_video_flag", show_video_flag))show_video_flag = false;
+    }
     if(!nh_image_param.getParam("save_result_video_flag", save_result_video_flag))save_result_video_flag = false;
     if(!nh_image_param.getParam("rate", video_rate))video_rate = 5.0;
     if(!nh_image_param.getParam("image_hight", image_hight))image_hight = 480.0;
