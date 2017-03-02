@@ -20,7 +20,7 @@
 using namespace cv;
 using namespace std;
 
-class MultiRobotDetecter
+class MyVideoWriter
 {
 public:
   //node
@@ -45,7 +45,7 @@ public:
   gpu::HOGDescriptor HOG_descriptor_detect;
   HOGDescriptor HOG_descriptor_classify;
   //video
-  string INPUT_VIDEO_WINDOW_NAME;
+  //string INPUT_VIDEO_WINDOW_NAME;
   string RESULT_VIDEO_WINDOW_NAME;
   bool show_video_flag;
   bool save_result_video_flag;
@@ -63,14 +63,14 @@ public:
   vector<float> result_classify;
   bool save_set_flag;
   
-  MultiRobotDetecter():
+  MyVideoWriter():
   it_(nh_),//intial it_
   nh_image_param("~")
   {
     //node
     if(!nh_image_param.getParam("subscribed_topic", subscribed_topic))subscribed_topic = "/dji_sdk/image_raw";
     // Subscrive to input video feed from "/dji_sdk/image_raw" topic, imageCb is the callback function
-    image_sub_ = it_.subscribe(subscribed_topic, 1, &MultiRobotDetecter::imageCb, this);
+    image_sub_ = it_.subscribe(subscribed_topic, 1, &MyVideoWriter::imageCb, this);
     //svm
     svm_detect.load(DetectSvmName);
     svm_classify.load(ClassifySvmName);
@@ -103,28 +103,25 @@ public:
     cout<<"dimension of svm detector for HOG detect(w+b):"<<detector_detect.size()<<endl;
     HOG_descriptor_detect.setSVMDetector(detector_detect);
     //video
-    if(!nh_image_param.getParam("show_video_flag", show_video_flag))show_video_flag = false;
+    if(!nh_image_param.getParam("show_video_flag", show_video_flag))show_video_flag = true;
     if(show_video_flag)
     {
-    INPUT_VIDEO_WINDOW_NAME="input video";
-    RESULT_VIDEO_WINDOW_NAME="result video";
-    namedWindow(INPUT_VIDEO_WINDOW_NAME);
+    //INPUT_VIDEO_WINDOW_NAME="input video";
+    RESULT_VIDEO_WINDOW_NAME="detect result";
+    //namedWindow(INPUT_VIDEO_WINDOW_NAME);
     namedWindow(RESULT_VIDEO_WINDOW_NAME);
     }
     if(!nh_image_param.getParam("save_result_video_flag", save_result_video_flag))save_result_video_flag = false;
     if(!nh_image_param.getParam("rate", video_rate))video_rate = 5.0;
-    if(!nh_image_param.getParam("image_hight", image_hight))image_hight = 480.0;
-    if(!nh_image_param.getParam("image_width", image_width))image_width = 640.0;
     video_delay = 1000/video_rate;
     if(!nh_image_param.getParam("result_video_file_name", result_video_file_name))result_video_file_name = "/home/ubuntu/ros_my_workspace/src/multirobot_detect/result/a544.avi";
-    result_video = VideoWriter(result_video_file_name, CV_FOURCC('M', 'J', 'P', 'G'), video_rate, Size(image_width, image_hight));
     //frame
     frame_num = 1;
     if(!nh_image_param.getParam("save_set_flag", save_set_flag))save_set_flag = false;
     
   }
   
-  ~MultiRobotDetecter()
+  ~MyVideoWriter()
   {
     destroyAllWindows();
   }
@@ -144,6 +141,13 @@ public:
     cv_ptr->image.copyTo(src_3);
     //cout<<"rows"<<src_3.rows<<endl;
     //cout<<"cols"<<src_3.cols<<endl;
+    
+    if(frame_num == 1)
+    {
+      image_hight = src_3.rows;
+      image_width = src_3.cols;
+      result_video = VideoWriter(result_video_file_name, CV_FOURCC('M', 'J', 'P', 'G'), video_rate, Size(image_width, image_hight));
+    }
     
     //frame
     cout<<"frame_num: "<<frame_num<<endl;
@@ -227,7 +231,7 @@ public:
     }
     if(show_video_flag)
     {
-      imshow(INPUT_VIDEO_WINDOW_NAME, src_3);
+      //imshow(INPUT_VIDEO_WINDOW_NAME, src_3);
       imshow(RESULT_VIDEO_WINDOW_NAME, dst_3);
       waitKey(1);
     }
@@ -238,7 +242,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "multirobot_detect_node");//node name
   double loop_rate;
-  MultiRobotDetecter mrd;//class initializing
+  MyVideoWriter mrd;//class initializing
   ros::NodeHandle nh_loop_param("~");
   if(!nh_loop_param.getParam("rate", loop_rate))loop_rate = 5;//video
   ros::Rate loop_rate_class(loop_rate);//frequency: n Hz
