@@ -20,7 +20,7 @@
 using namespace cv;
 using namespace std;
 
-class MyVideoWriter
+class MultirobotDetect
 {
 public:
   //node
@@ -63,14 +63,14 @@ public:
   vector<float> result_classify;
   bool save_set_flag;
   
-  MyVideoWriter():
+  MultirobotDetect():
   it_(nh_),//intial it_
   nh_image_param("~")
   {
     //node
     if(!nh_image_param.getParam("subscribed_topic", subscribed_topic))subscribed_topic = "/dji_sdk/image_raw";
     // Subscrive to input video feed from "/dji_sdk/image_raw" topic, imageCb is the callback function
-    image_sub_ = it_.subscribe(subscribed_topic, 1, &MyVideoWriter::imageCb, this);
+    image_sub_ = it_.subscribe(subscribed_topic, 1, &MultirobotDetect::imageCb, this);
     //svm
     svm_detect.load(DetectSvmName);
     svm_classify.load(ClassifySvmName);
@@ -121,7 +121,7 @@ public:
     
   }
   
-  ~MyVideoWriter()
+  ~MultirobotDetect()
   {
     destroyAllWindows();
   }
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "multirobot_detect_node");//node name
   double loop_rate;
-  MyVideoWriter mrd;//class initializing
+  MultirobotDetect md;//class initializing
   ros::NodeHandle nh_loop_param("~");
   if(!nh_loop_param.getParam("rate", loop_rate))loop_rate = 5;//video
   ros::Rate loop_rate_class(loop_rate);//frequency: n Hz
