@@ -26,14 +26,14 @@
 
 ///////////for GPU
 //HOG descriptor
-#define WinSizeDetect Size(48,24)
+#define WinSizeDetect Size(40,40)
 #define BlockSizeDetect Size(16,16)
 #define BlockStrideDetect Size(8,8)
 #define CellSizeDetect Size(8,8)
 #define NbinsDetect 9
 
 //HOG descriptor
-#define WinSizeClassify Size(64,32)
+#define WinSizeClassify Size(40,40)
 #define BlockSizeClassify Size(16,16)
 #define BlockStrideClassify Size(8,8)
 #define CellSizeClassify Size(8,8)
@@ -56,7 +56,7 @@
 //partial parameters of detectMultiScale
 #define HitThreshold 0		//bias of hyperplane
 #define WinStride Size(8,8)	//it must be the integer times of the block stride in HOG descriptor
-#define DetScale 1.05		//reduced proportion of image every time
+#define DetScale 1.1		//reduced proportion of image every time
 
 //#define TestImage "../Data/TestImage/13.jpg"
 //#define ResultImage "../Data/Result/13.jpg"
@@ -74,8 +74,8 @@
 //#define BackgroundSetFile "../Data/BackgroundSet/"
 //#define HardBackgroundSetFile "../Data/HardBackgroundSet/"
 //#define SetName "0SetName.txt"
-#define DetectSvmName "/home/ubuntu/ros_my_workspace/src/multirobot_detect/src/SVM_HOG_Detect.xml"
-#define ClassifySvmName "/home/ubuntu/ros_my_workspace/src/multirobot_detect/src/SVM_HOG_Classify.xml"
+#define DetectSvmName "/home/zj/ros_workspace/src/multirobot_detect/src/SVM_HOG_Detect.xml"
+#define ClassifySvmName "/home/zj/ros_workspace/src/multirobot_detect/src/SVM_HOG_Classify.xml"
 
 /*
 #define TrainPerc 0.8	//proportion of train set

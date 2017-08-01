@@ -42,7 +42,8 @@ public:
   Mat support_vector_mat_detect;
   Mat result_mat_detect;
   //HOG descriptor
-  gpu::HOGDescriptor HOG_descriptor_detect;
+  //gpu::HOGDescriptor HOG_descriptor_detect;//gpu
+  HOGDescriptor HOG_descriptor_detect;
   HOGDescriptor HOG_descriptor_classify;
   //video
   //string INPUT_VIDEO_WINDOW_NAME;
@@ -58,7 +59,7 @@ public:
   //frame
   int frame_num;
   Mat src_3,src_4,dst_3;
-  gpu::GpuMat src_GPU;
+  gpu::GpuMat src_GPU;//gpu
   vector<Rect> location_detect;
   vector<float> result_classify;
   bool save_set_flag;
@@ -82,8 +83,8 @@ public:
     support_vector_mat_detect = Mat::zeros(support_vector_num_detect, descriptor_dim_detect, CV_32FC1);
     result_mat_detect = Mat::zeros(1, descriptor_dim_detect, CV_32FC1);
     //HOG descriptor
-    HOG_descriptor_detect = gpu::HOGDescriptor(WinSizeDetect,BlockSizeDetect,BlockStrideDetect,CellSizeDetect,NbinsDetect,1,0.2,false,5);
-    //HOG_descriptor_detect = HOGDescriptor(WinSizeDetect,BlockSizeDetect,BlockStrideDetect,CellSizeDetect,NbinsDetect,1,0.2,false,5);
+    //HOG_descriptor_detect = gpu::HOGDescriptor(WinSizeDetect,BlockSizeDetect,BlockStrideDetect,CellSizeDetect,NbinsDetect,1,-1,0,0.2,false,10);//gpu
+    HOG_descriptor_detect = HOGDescriptor(WinSizeDetect,BlockSizeDetect,BlockStrideDetect,CellSizeDetect,NbinsDetect,1,-1,0,0.2,false,10);
     HOG_descriptor_classify = HOGDescriptor(WinSizeClassify,BlockSizeClassify,BlockStrideClassify,CellSizeClassify,NbinsClassify);
     for(int i=0; i<support_vector_num_detect; i++) 
     {
@@ -154,12 +155,12 @@ public:
     frame_num++;
     
     src_3.copyTo(dst_3);
-    cvtColor(src_3,src_4,CV_BGR2BGRA);
-    src_GPU.upload(src_4);
+    //cvtColor(src_3,src_4,CV_BGR2BGRA);//gpu
+    //src_GPU.upload(src_4);//gpu
     
     //detect
-    HOG_descriptor_detect.detectMultiScale(src_GPU, location_detect, HitThreshold, WinStride, Size(), DetScale, 2);
-    //HOG_descriptor_detect.detectMultiScale(src0, found, HitThreshold, WinStride, Size(), DetScale, 2);
+    //HOG_descriptor_detect.detectMultiScale(src_GPU, location_detect, HitThreshold, WinStride, Size(), DetScale, 2);//gpu
+    HOG_descriptor_detect.detectMultiScale(src_3, location_detect, HitThreshold, WinStride, Size(), DetScale, 2);
     
     //classfy
     for(int i=0; i<location_detect.size(); i++)  
