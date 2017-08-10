@@ -60,8 +60,9 @@ public:
   int frame_num;
   Mat src_3,src_4,dst_3;
   gpu::GpuMat src_GPU;//gpu
-  vector<Rect> location_detect;
+  vector<Rect> location_detect, location_detect_rob, location_detect_obs;
   vector<float> scores;
+  FilterAndEstimate fae4detect;
   vector<float> result_classify;
   bool save_set_flag;
   
@@ -160,12 +161,15 @@ public:
     //src_GPU.upload(src_4);//gpu
     
     //detect
-    //HOG_descriptor_detect.detectMultiScale(src_GPU, location_detect, HitThreshold, WinStride, Size(), DetScale, 2);//gpu
-    HOG_descriptor_detect.detectMultiScale(src_3, location_detect, HitThreshold, WinStride, Size(), DetScale, 2);
+    //HOG_descriptor_detect.detectMultiScale(src_GPU, location_detect, HitThreshold, WinStride, Size(), DetScale, 0.2, true);//gpu
+    HOG_descriptor_detect.detectMultiScale(src_3, location_detect, HitThreshold, WinStride, Size(0,0), DetScale, 0.2, true);
     
     //Non-maximum suppression
     scores = get_scores(src_3, location_detect, svm_detect, descriptor_dim_detect, WinSizeDetect, HOG_descriptor_detect);
     location_detect = non_maximum_suppression(location_detect, scores, SuppressionRate);
+    
+    //filter and estimate
+    location_detect = fae4detect.runFilter(location_detect, BBOverlapRate);
     
     //classfy
     for(int i=0; i<location_detect.size(); i++)  
@@ -187,6 +191,7 @@ public:
       {
 	if (temp_result_classify == 1)//irobot
 	{
+	  location_detect_rob.push_back(location_detect[i]);
 	  rectangle(dst_3, location_detect[i], CV_RGB(0,0,255), 3);
 	  if (save_set_flag)
 	  {
@@ -199,6 +204,7 @@ public:
 	} 
 	else if (temp_result_classify == 2)//obstacle
 	{
+	  location_detect_obs.push_back(location_detect[i]);
 	  rectangle(dst_3, location_detect[i], CV_RGB(0,255,0), 3);
 	  if (save_set_flag)
 	  {

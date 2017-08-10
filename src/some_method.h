@@ -366,5 +366,44 @@ vector<Rect> non_maximum_suppression(const vector<Rect> &boxes, const vector<flo
   return boxes_nms;
 }
 
+class FilterAndEstimate
+{
+public:
+  vector<Rect> boxes, boxes_last;
+  
+  FilterAndEstimate(){}
+  /*
+  FilterAndEstimate(const vector<Rect> &boxes0)
+  {
+    boxes.assign(boxes0.begin(), boxes0.end());
+    boxes_last.assign(boxes0.begin(), boxes0.end());
+  }
+  */
+  ~FilterAndEstimate(){}
+  
+  vector<Rect> runFilter(const vector<Rect> &boxes0, float bbOverlap_rate)
+  {
+    boxes.assign(boxes0.begin(), boxes0.end());
+    for(int i = boxes.size() - 1; i > -1; i--)
+    {
+      bool delete_flag = true;
+      for(int j = 0; j < boxes_last.size(); j++)
+      {
+	if(bbOverlap(boxes[i], boxes_last[j]) > bbOverlap_rate)
+	{
+	  delete_flag = false;
+	  break;
+	}
+      }
+      if(delete_flag)
+	boxes.erase(boxes.begin() + i);
+    }
+    boxes_last.assign(boxes0.begin(), boxes0.end());
+    return boxes;
+  }
+};
+
+
+
 
 
