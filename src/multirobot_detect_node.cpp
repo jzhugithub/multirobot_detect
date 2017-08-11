@@ -7,8 +7,6 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <iostream>  
-#include <fstream>  
-#include <strstream>
 #include <opencv2/core/core.hpp>  
 #include <opencv2/objdetect/objdetect.hpp>  
 #include <opencv2/ml/ml.hpp>  
@@ -120,7 +118,6 @@ public:
     if(!nh_image_param.getParam("result_video_file_name", result_video_file_name))result_video_file_name = "/home/ubuntu/ros_my_workspace/src/multirobot_detect/result/a544.avi";
     //frame
     frame_num = 1;
-    if(!nh_image_param.getParam("save_set_flag", save_set_flag))save_set_flag = false;
     
   }
   
@@ -186,46 +183,22 @@ public:
       float temp_result_classify = svm_classify.predict(descriptor_mat_classify);
       result_classify.push_back(temp_result_classify);
       
-      //label the robot for (save video, show video, save set)
-      if(save_result_video_flag | show_video_flag | save_set_flag)
+      //label the robot for (save video, show video)
+      if(save_result_video_flag | show_video_flag)
       {
 	if (temp_result_classify == 1)//irobot
 	{
 	  location_detect_rob.push_back(location_detect[i]);
 	  rectangle(dst_3, location_detect[i], CV_RGB(0,0,255), 3);
-	  if (save_set_flag)
-	  {
-	    strstream ss;
-	    string s;
-	    ss<<ResultVideoFile_1<<1000*frame_num+i<<".jpg";
-	    ss>>s;
-	    imwrite(s,src_3(location_detect[i]));
-	  }
 	} 
 	else if (temp_result_classify == 2)//obstacle
 	{
 	  location_detect_obs.push_back(location_detect[i]);
 	  rectangle(dst_3, location_detect[i], CV_RGB(0,255,0), 3);
-	  if (save_set_flag)
-	  {
-	    strstream ss;
-	    string s;
-	    ss<<ResultVideoFile_2<<1000*frame_num+i<<".jpg";
-	    ss>>s;
-	    imwrite(s,src_3(location_detect[i]));
-	  }
 	}
 	else if (temp_result_classify ==3)//background
 	{
 	  rectangle(dst_3, location_detect[i], Scalar(0,0,255), 3);
-	  if (save_set_flag)
-	  {
-	    strstream ss;
-	    string s;
-	    ss<<ResultVideoFile_3<<1000*frame_num+i<<".jpg";
-	    ss>>s;
-	    imwrite(s,src_3(location_detect[i]));
-	  }
 	}
 	else//other
 	{
@@ -252,6 +225,7 @@ public:
 
 int main(int argc, char** argv)
 {
+  cout << "opencv version: "<<CV_VERSION << endl;
   ros::init(argc, argv, "multirobot_detect_node");//node name
   double loop_rate;
   MultirobotDetect md;//class initializing
