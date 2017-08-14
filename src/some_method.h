@@ -257,6 +257,7 @@ private:
   void calculateMinDistance(RobotMessage &robots_temp_i, vector<RobotMessage> &robots_last_temp, int &pair_number_i)
   {
     float dx, dy, distance;
+    robots_temp_i.distance_min = 10000.0;
     for (int i = 0; i<robots_last_temp.size(); i++)
     {
       dx = robots_temp_i.center.x - robots_last_temp[i].center.x;
