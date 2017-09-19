@@ -160,7 +160,8 @@ public:
     //detect
     //HOG_descriptor_detect.detectMultiScale(src_GPU, location_detect, HitThreshold, WinStride, Size(), DetScale, 0.2, true);//gpu
     HOG_descriptor_detect.detectMultiScale(src_3, location_detect, HitThreshold, WinStride, Size(0,0), DetScale, 2.0, false);
-    
+    location_detect = resize_boxes(location_detect, src_3, detect_resize_rate);
+
     //Non-maximum suppression
     scores = get_scores(src_3, location_detect, svm_detect, descriptor_dim_detect, WinSizeDetect, HOG_descriptor_detect);
     location_detect = non_maximum_suppression(location_detect, scores, SuppressionRate);
@@ -198,11 +199,11 @@ public:
 	}
 	else if (temp_result_classify ==3)//background
 	{
-	  rectangle(dst_3, location_detect[i], Scalar(0,0,255), 3);
+	  //rectangle(dst_3, location_detect[i], Scalar(0,0,255), 3);
 	}
 	else//other
 	{
-	  rectangle(dst_3, location_detect[i], Scalar(255,255,255), 3);
+	  //rectangle(dst_3, location_detect[i], Scalar(255,255,255), 3);
 	}
       }
     }

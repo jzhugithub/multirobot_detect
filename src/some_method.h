@@ -402,7 +402,30 @@ public:
   }
 };
 
-
+//resize boxes
+vector<Rect> resize_boxes(const vector<Rect> boxes_org, const Mat src, const double rate)
+{
+  vector<Rect> boxes_resize;
+  Rect box_tmp;
+  double x, y, width, height;
+  for(int i = 0; i < boxes_org.size(); i++)
+  {
+    width = boxes_org[i].width * rate;
+    height = boxes_org[i].height * rate;
+    x = boxes_org[i].x - (rate - 1.0) * boxes_org[i].width / 2.0;
+    y = boxes_org[i].y - (rate - 1.0) * boxes_org[i].height / 2.0;
+    if(x > 0.0 & y > 0.0 & x + width < src.cols & y + height < src.rows)
+    {
+      box_tmp = Rect(int(x), int(y), int(width), int(height));
+    }
+    else
+    {
+      box_tmp = boxes_org[i];
+    }
+    boxes_resize.push_back(box_tmp);
+  }
+  return boxes_resize;
+}
 
 
 

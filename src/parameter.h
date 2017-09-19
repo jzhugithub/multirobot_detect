@@ -59,7 +59,7 @@
 #define DetScale 1.1		//reduced proportion of image every time
 #define SuppressionRate 0.5     //value for non maximum suppression
 #define BBOverlapRate 0.2	//BBOverlapRate for filter
-
+#define detect_resize_rate 1.4	//boxes' resizerate of detect's output
 
 //#define TestImage "../Data/TestImage/13.jpg"
 //#define ResultImage "../Data/Result/13.jpg"
